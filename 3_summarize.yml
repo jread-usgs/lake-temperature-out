@@ -2,11 +2,15 @@ target_default: 3_summarize
 
 packages:
   - dplyr
+  - feather
+  - tidyr
 
 sources:
   - 3_summarize/src/combine_files_to_zip.R
   - 3_summarize/src/calculate_total_benthic_area.R
-  - 2_process/src/calculate_toha.R # Has the benthic area fxn
+  - 2_process/src/calculate_toha.R # Has the benthic area fxn & resample_hypso
+  - 3_summarize/src/annual_thermal_metrics.R
+  - 3_summarize/src/annual_thermal_metric_tasks.R
 
 targets:
   3_summarize:
@@ -14,6 +18,8 @@ targets:
       - 3_summarize/out/3_summarize_zip_pb0_toha.yml
       - 3_summarize/out/3_summarize_zip_pgdl_toha.yml
       - 3_summarize/out/total_benthic_areas.csv
+      - 3_summarize/out/annual_metrics_pgdl.csv
+      - 3_summarize/out/annual_metrics_pb0.csv
 
   ### Zip up lake toha files by lake group ###
   
@@ -41,3 +47,31 @@ targets:
     command: calculate_total_benthic_area(
       target_name = target_name,
       morphometry = morphometry)
+  
+  ## Calculate a collection of annual thermal metrics
+  
+  # Based these additional metrics on the ones included in a previous lake modeling
+  # data release (see https://www.sciencebase.gov/catalog/item/57d9e887e4b090824ffb1098)
+  
+  ice_files:
+    command: get_filenames_from_ind("2_process/out/iceflags_unzipped.yml")
+  
+  pgdl_site_files:
+    command: get_filenames_from_ind("2_process/out/2_pgdl_grp_tasks_completed.yml")
+  3_summarize/out/annual_metrics_pgdl.csv:
+    command: do_annual_metrics_multi_lake(
+      final_target = target_name,
+      site_files = pgdl_site_files,
+      ice_files = ice_files,
+      '2_process/src/calculate_toha.R',
+      '3_summarize/src/annual_thermal_metrics.R')
+  
+  pb0_site_files:
+    command: get_filenames_from_ind("2_process/out/2_process_grp_tasks_completed.yml")
+  3_summarize/out/annual_metrics_pb0.csv:
+    command: do_annual_metrics_multi_lake(
+      final_target = target_name,
+      site_files = pb0_site_files,
+      ice_files = ice_files,
+      '2_process/src/calculate_toha.R',
+      '3_summarize/src/annual_thermal_metrics.R')
