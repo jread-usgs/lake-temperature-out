@@ -118,6 +118,27 @@ targets:
       remake_file = '2_pgdl_lake_tasks.yml')
     depends:
       - morphometry
+
+  ## For PGDL KD STATIC!!!! ##
+  pgdl_STATIC_lake_tasks:
+    command: create_lake_tasks(task_df_fn = '2_process/out/2_pgdl_grp_tasks_completed.yml', 
+      log_folder = I("2_process/log"))
+  
+  2_pgdl_STATIC_lake_tasks.yml:
+    command: create_lake_task_makefile(
+      makefile = target_name, 
+      task_plan = pgdl_STATIC_lake_tasks, 
+      remake_file = I('2_process.yml'),
+      final_targets = I('2_process/out/2_pgdl_STATIC_lake_tasks.ind'))
+  
+  #'2_process/tmp/pgdl_toha_nhdhr_120018569.csv', FAILED!!!Error in seq.int(0, to0 - from, by) : 'to' must be a finite number
+  #In addition: There were 50 or more warnings (use warnings() to see the first 50)
+  2_process/out/2_pgdl_STATIC_lake_tasks.ind:
+    command: scmake(
+      target_names = I('2_pgdl_STATIC_lake_tasks.ind_promise'),
+      remake_file = '2_pgdl_STATIC_lake_tasks.yml')
+    depends:
+      - morphometry
       
   ### Calculate TOHA for each lake using observed temperature data ###
   

@@ -33,7 +33,7 @@ calculate_toha_per_lake <- function(target_name, site_data_fn, morphometry) {
         current_date = site_data$DateTime[r],
         wtr = site_data[r, wtr_cols], 
         io = site_data$io[r], 
-        kd = site_data$kd[r], 
+        kd = median(site_data$kd), 
         lat = morphometry$latitude, 
         lon = morphometry$longitude, 
         hypsos = hypsos, 
