@@ -1,5 +1,5 @@
 
-calculate_annual_metrics_per_lake <- function(site_id, site_file, ice_file, morphometry) {
+calculate_annual_metrics_per_lake <- function(site_id, site_file, ice_file, morphometry, verbose = FALSE) {
   
   start_tm <- Sys.time()
     
@@ -95,8 +95,11 @@ calculate_annual_metrics_per_lake <- function(site_id, site_file, ice_file, morp
                     date_over_temps, days_height_vol_in_range)) %>%
     ungroup()
   
-  message(sprintf("Completed annual metrics for %s in %s min", site_id, 
-                  round(as.numeric(Sys.time() - start_tm, units = "mins"), 2)))
+  if (verbose){
+    message(sprintf("Completed annual metrics for %s in %s min", site_id, 
+                    round(as.numeric(Sys.time() - start_tm, units = "mins"), 2)))
+  }
+  
   
   return(annual_metrics)
 
